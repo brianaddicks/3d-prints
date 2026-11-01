@@ -26,32 +26,30 @@ WIDTH = 50.8  # 2 inches
 LENGTH = 264.0
 CORNER = 8.0  # corners cut at 45 degrees, to fit into the bed corners
 SADDLE = 3.0  # ends dip in the middle, so the wraps centre themselves
-LIP_WIDTH = 4.0
+TOP_LIP = 2.5  # narrow, so the 42-45 mm ring lies flat between the lips
+BACK_LIP = 4.0  # wider, as these are what sit on the bed
 BACK_DEPTH = 4.0  # channel on the underside
 WEB = 4.0
-TOP_DEPTH = 5.0  # channel on the top
-SOLID_END_PLUG = 45.0  # underside is solid this far in from each end, so the
-SOLID_END_HOOK = 50.0  # hook and slots print without supports
+TOP_DEPTH = 8.0  # channel on the top
+END_RIB = 5.0  # underside rib across each end, measured in from the saddle
 
 # Plug: NEMA 1-15 (US two-blade)
 BLADE_SPACING = 12.7  # centre to centre, fixed by the standard
 SLOT_WIDTH = 8.5  # both slots clear the 7.9 wide polarized blade, so it fits either way round
 SLOT_THICKNESS = 1.9  # blades are about 1.5 thick. Reduce for a tighter grip.
-LAND_HEIGHT = 16.0  # raised beside one lip, tall enough to take a whole blade
+LAND_HEIGHT = 16.0  # beside one lip, tall enough to take a whole blade
 LAND_WIDTH = 16.0
 LAND_START = 16.0
 LAND_LENGTH = 24.0
 
-# Hook: a tine in a notch open to the -y side, because the ring is a 42-45 mm loop of
-# 2 mm wire (measured from a photo) and can't pass around a tine inside a closed window.
-# The tine points away from the plug, so pulling the strand seats the ring.
-NOTCH_FROM_END = 12.0
-NOTCH_LENGTH = 30.0
-NOTCH_INNER_Y = 1.0  # inner wall of the notch. The notch is open from here to the -y edge.
-TINE_WIDTH = 7.0
-TINE_Y = -10.0
-TINE_GAP = 8.0  # tine tip to the far edge of the notch
-BARB = 2.0  # catch on each side of the tine tip
+# Hook: rises from the channel floor and reaches toward the end. The ring (42-45 mm
+# across, 2 mm wire, measured from a photo) lies flat around it, with its wire in the
+# crotch under the hook, so pulling the strand toward the plug seats it. The underside
+# rises at 45 degrees, so it prints without supports.
+HOOK_FROM_END = 24.0  # end to the crotch
+HOOK_WIDTH = 12.0
+HOOK_THROAT = 5.0  # height and reach of the opening under the hook
+HOOK_BACK = 6.0  # how far the base spreads toward the plug
 
 CHAMFER = 0.8
 FOOT_CHAMFER = 0.3  # bottom edge, offsets elephant's foot
@@ -88,10 +86,10 @@ def outline():
     )
 
 
-def channel():
-    """2D area between the lips, open at both ends. The lips follow the cut corners."""
-    half = WIDTH / 2 - LIP_WIDTH
-    end = WIDTH / 2 - CORNER - LIP_WIDTH * (math.sqrt(2) - 1)
+def channel(lip):
+    """2D area between lips of this width, open at both ends. The lips follow the cut corners."""
+    half = WIDTH / 2 - lip
+    end = WIDTH / 2 - CORNER - lip * (math.sqrt(2) - 1)
     inset = half - end
     return Polygon(
         [
@@ -122,31 +120,24 @@ def slots():
     ]
 
 
-def hook_notch():
-    """Side notch for the hook, with the barbed tine left standing in it."""
-    far = LENGTH - NOTCH_FROM_END
-    near = far - NOTCH_LENGTH
-    open_y = -WIDTH / 2 - 2
-    tip = far - TINE_GAP
-    tine_lo, tine_hi = TINE_Y - TINE_WIDTH / 2, TINE_Y + TINE_WIDTH / 2
-    return rounded(
-        Polygon(
-            [
-                (near, open_y),
-                (far, open_y),
-                (far, NOTCH_INNER_Y),
-                (near, NOTCH_INNER_Y),
-                (near, tine_hi),
-                (tip - 6, tine_hi),
-                (tip - 3, tine_hi + BARB),
-                (tip, TINE_Y),
-                (tip - 3, tine_lo - BARB),
-                (tip - 6, tine_lo),
-                (near, tine_lo),
-            ]
-        ),
-        0.8,
+def hook():
+    """Hook on the channel floor, from its side profile. Its top is level with the lips."""
+    crotch = LENGTH - HOOK_FROM_END
+    profile = Polygon(
+        [
+            (crotch - HOOK_BACK, FLOOR_TOP - 0.5),
+            (crotch, FLOOR_TOP - 0.5),
+            (crotch, FLOOR_TOP),
+            (crotch + HOOK_THROAT, FLOOR_TOP + HOOK_THROAT),
+            (crotch + HOOK_THROAT, HEIGHT),
+            (crotch - 1, HEIGHT),
+            (crotch - HOOK_BACK, FLOOR_TOP),
+        ]
     )
+    mesh = trimesh.creation.extrude_polygon(profile, HOOK_WIDTH)
+    mesh.apply_transform(trimesh.transformations.rotation_matrix(math.pi / 2, (1, 0, 0)))
+    mesh.apply_translation((0, HOOK_WIDTH / 2, 0))
+    return mesh
 
 
 def extrude(poly, z0, z1):
@@ -178,16 +169,19 @@ def cutter(poly, top):
 
 def build():
     shape = outline()
-    between = channel()
-    ends = box(-1, -30, SOLID_END_PLUG, 30).union(box(LENGTH - SOLID_END_HOOK, -30, LENGTH + 1, 30))
+    # Lips, plus a rib across each end that anchors the bridged floor on all four sides.
+    ends = box(-1, -30, SADDLE + END_RIB, 30).union(box(LENGTH - SADDLE - END_RIB, -30, LENGTH + 1, 30))
+    footing = shape.difference(channel(BACK_LIP).difference(ends)).buffer(-0.05).buffer(0.05)
     parts = [
-        prism(shape.difference(between), HEIGHT),  # lips
+        extrude(footing.buffer(-FOOT_CHAMFER), 0, LAYER),
+        extrude(footing, LAYER, BACK_DEPTH + 0.5),
         extrude(shape, BACK_DEPTH, FLOOR_TOP),  # web
-        prism(shape.intersection(ends), FLOOR_TOP),  # solid ends
+        prism(shape.difference(channel(TOP_LIP)), HEIGHT, FLOOR_TOP - 0.5),  # top lips
         prism(land(), LAND_HEIGHT),
+        hook(),
     ]
     part = trimesh.boolean.union(parts, engine="manifold")
-    cuts = [cutter(s, LAND_HEIGHT) for s in slots()] + [cutter(hook_notch(), HEIGHT)]
+    cuts = [cutter(s, LAND_HEIGHT) for s in slots()]
     return trimesh.boolean.difference([part] + cuts, engine="manifold")
 
 

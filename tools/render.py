@@ -154,7 +154,7 @@ def main():
     panel(fig, grid[0, :2], flat, 35, -80, f"Overall, {length:.0f} x {width:.0f} mm")
     bed_plan(fig.add_subplot(grid[0, 2]), mesh, args.bed)
     panel(fig, grid[1, 0], flat, 40, -130, "Plug end", (30, 0, 6), 90)
-    panel(fig, grid[1, 1], flat, 40, -50, "Hook end", (length - 32, 0, 4), 90)
+    panel(fig, grid[1, 1], flat, 28, 25, "Hook end, looking in from the end", (length - 24, 0, 10), 60)
     panel(fig, grid[1, 2], flat, -35, -80, "Underside", None, None)
     fig.savefig(args.png)
 
