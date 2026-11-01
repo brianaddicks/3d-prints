@@ -42,13 +42,15 @@ LAND_WIDTH = 16.0
 LAND_START = 16.0
 LAND_LENGTH = 24.0
 
-# Hook: a tine inside a window. The ring goes through the window and around the tine,
-# which points away from the plug so pulling the strand seats the ring.
-WINDOW_FROM_END = 12.0
-WINDOW_LENGTH = 30.0
-WINDOW_WIDTH = 22.0
-TINE_WIDTH = 6.0
-TINE_GAP = 8.0  # tine tip to the far edge of the window
+# Hook: a tine in a notch open to the -y side, because the ring is a 42-45 mm loop of
+# 2 mm wire (measured from a photo) and can't pass around a tine inside a closed window.
+# The tine points away from the plug, so pulling the strand seats the ring.
+NOTCH_FROM_END = 12.0
+NOTCH_LENGTH = 30.0
+NOTCH_INNER_Y = 1.0  # inner wall of the notch. The notch is open from here to the -y edge.
+TINE_WIDTH = 7.0
+TINE_Y = -10.0
+TINE_GAP = 8.0  # tine tip to the far edge of the notch
 BARB = 2.0  # catch on each side of the tine tip
 
 CHAMFER = 0.8
@@ -120,27 +122,27 @@ def slots():
     ]
 
 
-def window():
-    """Hook window with the barbed tine left standing in it."""
-    far = LENGTH - WINDOW_FROM_END
-    near = far - WINDOW_LENGTH
-    half = WINDOW_WIDTH / 2
+def hook_notch():
+    """Side notch for the hook, with the barbed tine left standing in it."""
+    far = LENGTH - NOTCH_FROM_END
+    near = far - NOTCH_LENGTH
+    open_y = -WIDTH / 2 - 2
     tip = far - TINE_GAP
-    tine = TINE_WIDTH / 2
+    tine_lo, tine_hi = TINE_Y - TINE_WIDTH / 2, TINE_Y + TINE_WIDTH / 2
     return rounded(
         Polygon(
             [
-                (near, -half),
-                (far, -half),
-                (far, half),
-                (near, half),
-                (near, tine),
-                (tip - 6, tine),
-                (tip - 3, tine + BARB),
-                (tip, 0),
-                (tip - 3, -tine - BARB),
-                (tip - 6, -tine),
-                (near, -tine),
+                (near, open_y),
+                (far, open_y),
+                (far, NOTCH_INNER_Y),
+                (near, NOTCH_INNER_Y),
+                (near, tine_hi),
+                (tip - 6, tine_hi),
+                (tip - 3, tine_hi + BARB),
+                (tip, TINE_Y),
+                (tip - 3, tine_lo - BARB),
+                (tip - 6, tine_lo),
+                (near, tine_lo),
             ]
         ),
         0.8,
@@ -185,7 +187,7 @@ def build():
         prism(land(), LAND_HEIGHT),
     ]
     part = trimesh.boolean.union(parts, engine="manifold")
-    cuts = [cutter(s, LAND_HEIGHT) for s in slots()] + [cutter(window(), HEIGHT)]
+    cuts = [cutter(s, LAND_HEIGHT) for s in slots()] + [cutter(hook_notch(), HEIGHT)]
     return trimesh.boolean.difference([part] + cuts, engine="manifold")
 
 

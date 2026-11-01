@@ -7,8 +7,9 @@ lengthwise around the ends, and lips on both faces keep it from sliding off the 
 
 - 264 x 50.8 mm (2 inches wide), the longest that width fits on the K1 bed diagonal.
   The STL is already turned onto the diagonal.
-- To start, pass the ring through the window and over the hook's tine. It points away from
-  the plug, so pulling the strand seats the ring.
+- To start, slip the ring onto the hook from the open side of the notch. The hook points away
+  from the plug, so pulling the strand seats the ring. It's sized for a ring of about 42-45 mm
+  in 2 mm wire, measured from a photo of the first print, whose closed window the ring couldn't use.
 - To finish, push the plug's blades into the raised block. The slots suit a US two-blade plug,
   with room for the wider polarized blade either way round, and the block takes the full blade.
 
