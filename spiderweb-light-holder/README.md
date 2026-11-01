@@ -1,14 +1,16 @@
 # Spiderweb light holder
 
-Holds a large spiderweb light gathered into a single strand. The ring goes on the
-hook and the plug's blades go in the slots, with the strand running along the bar.
+A winder for a large spiderweb light gathered into a single strand. The strand wraps
+lengthwise around the ends, and lips on both faces keep it from sliding off the sides.
 
 ![Render](render.png)
 
-- About 297 mm long, the most the K1 bed allows, so the STL is already turned onto the bed diagonal.
-- The hook opens away from the plug, so tension in the strand seats the ring.
-- The slots suit a US two-blade plug, with room for the wider polarized blade either way round.
-  The plug's pull goes against the blade faces, so it won't pull the blades out of the slots.
+- 264 x 50.8 mm (2 inches wide), the longest that width fits on the K1 bed diagonal.
+  The STL is already turned onto the diagonal.
+- To start, pass the ring through the window and over the hook's tine. It points away from
+  the plug, so pulling the strand seats the ring.
+- To finish, push the plug's blades into the raised block. The slots suit a US two-blade plug,
+  with room for the wider polarized blade either way round, and the block takes the full blade.
 
 ## Printing
 
@@ -18,8 +20,9 @@ Import the STL into OrcaSlicer and leave it where it lands, without rotating or 
 | --- | --- |
 | Printer | Creality K1 (0.4 nozzle) |
 | Process | 0.20mm Standard |
-| Filament | PLA, about 20 g |
-| Supports | None |
-| Time | About 31 minutes |
+| Filament | PLA, about 50 g |
+| Time | About 1 hour 20 minutes |
+| Brim | **None.** Auto brim runs right up to the bed edge. |
+| Supports | None. The underside channel bridges 43 mm between the lips. |
 
 Change the dimensions at the top of `model.py`, then rerun it. `SLOT_THICKNESS` sets the plug's grip.

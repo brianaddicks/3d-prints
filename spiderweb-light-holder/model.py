@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Spiderweb light holder: a flat bar with a hook for the ring and slots for the plug.
+"""Spiderweb light holder: a 2 inch wide winder with lips, a hook for the ring and slots for the plug.
 
-Written to spiderweb-light-holder.stl already turned 45 degrees, because the bar
-only reaches its full length across the diagonal of the K1 bed.
+The strand winds lengthwise around the two ends, in a channel on each face.
+Written to spiderweb-light-holder.stl already turned 45 degrees, because the
+winder only reaches its full length across the diagonal of the K1 bed.
 
-Bar coordinates: x runs from the plug end (0) to the hook tip (OVERALL_LENGTH),
-y across the bar, z up from the bed.
+Coordinates: x runs from the plug end (0) to the hook end (LENGTH), y across
+the winder, z up from the bed.
 """
 import math
 from pathlib import Path
@@ -20,34 +21,42 @@ HERE = Path(__file__).parent
 BED = 220.0
 BED_MARGIN = 4.0  # clear of each bed edge
 
+# Winder
+WIDTH = 50.8  # 2 inches
+LENGTH = 264.0
+CORNER = 8.0  # corners cut at 45 degrees, to fit into the bed corners
+SADDLE = 3.0  # ends dip in the middle, so the wraps centre themselves
+LIP_WIDTH = 4.0
+BACK_DEPTH = 4.0  # channel on the underside
+WEB = 4.0
+TOP_DEPTH = 5.0  # channel on the top
+SOLID_END_PLUG = 45.0  # underside is solid this far in from each end, so the
+SOLID_END_HOOK = 50.0  # hook and slots print without supports
+
 # Plug: NEMA 1-15 (US two-blade)
 BLADE_SPACING = 12.7  # centre to centre, fixed by the standard
 SLOT_WIDTH = 8.5  # both slots clear the 7.9 wide polarized blade, so it fits either way round
 SLOT_THICKNESS = 1.9  # blades are about 1.5 thick. Reduce for a tighter grip.
-FIRST_SLOT_X = 11.0
+LAND_HEIGHT = 16.0  # raised beside one lip, tall enough to take a whole blade
+LAND_WIDTH = 16.0
+LAND_START = 16.0
+LAND_LENGTH = 24.0
 
-# Bar
-OVERALL_LENGTH = 298.0
-BAR_WIDTH = 16.0
-BAR_HEIGHT = 8.0
-PAD_WIDTH = 18.0
-PAD_HEIGHT = 12.0  # taller at the plug so the blades can't rock
-PAD_FLAT_END = 40.0
-PAD_RAMP_END = 54.0
-
-# Hook: the ring goes over the tine and its wire seats in the notch.
-# The notch opens away from the plug, so pulling the strand tight seats the ring.
-TINE_WIDTH = 6.5
-TINE_Y = -1.0  # close to the bar axis, where the bed corner leaves the most room
-NOTCH_WIDTH = 7.0
-NOTCH_DEPTH = 26.0  # tine tip to notch floor
-LIP_LENGTH = 9.0  # how far the outer wall stands above the notch floor
-LIP_WIDTH = 4.5
-BARB = 2.2  # catch on the tine tip, keeps the ring on when the strand goes slack
+# Hook: a tine inside a window. The ring goes through the window and around the tine,
+# which points away from the plug so pulling the strand seats the ring.
+WINDOW_FROM_END = 12.0
+WINDOW_LENGTH = 30.0
+WINDOW_WIDTH = 22.0
+TINE_WIDTH = 6.0
+TINE_GAP = 8.0  # tine tip to the far edge of the window
+BARB = 2.0  # catch on each side of the tine tip
 
 CHAMFER = 0.8
 FOOT_CHAMFER = 0.3  # bottom edge, offsets elephant's foot
 LAYER = 0.2
+
+FLOOR_TOP = BACK_DEPTH + WEB
+HEIGHT = FLOOR_TOP + TOP_DEPTH
 
 
 def rounded(poly, radius):
@@ -56,108 +65,132 @@ def rounded(poly, radius):
 
 
 def outline():
-    """2D outline of the bar, with the slots left out."""
-    half_bar, half_pad = BAR_WIDTH / 2, PAD_WIDTH / 2
-    tip = OVERALL_LENGTH
-    floor_x = tip - NOTCH_DEPTH
-    tine_lo, tine_hi = TINE_Y - TINE_WIDTH / 2, TINE_Y + TINE_WIDTH / 2
-    notch_hi = tine_hi + NOTCH_WIDTH
-    lip_hi = notch_hi + LIP_WIDTH
+    """2D outline, with cut corners and saddled ends."""
+    half, narrow = WIDTH / 2, WIDTH / 2 - CORNER
+    return rounded(
+        Polygon(
+            [
+                (SADDLE, 0),
+                (0, -narrow),
+                (CORNER, -half),
+                (LENGTH - CORNER, -half),
+                (LENGTH, -narrow),
+                (LENGTH - SADDLE, 0),
+                (LENGTH, narrow),
+                (LENGTH - CORNER, half),
+                (CORNER, half),
+                (0, narrow),
+            ]
+        ),
+        1.0,
+    )
 
-    body = Polygon(
+
+def channel():
+    """2D area between the lips, open at both ends. The lips follow the cut corners."""
+    half = WIDTH / 2 - LIP_WIDTH
+    end = WIDTH / 2 - CORNER - LIP_WIDTH * (math.sqrt(2) - 1)
+    inset = half - end
+    return Polygon(
         [
-            # plug end comes to a point, to fit into the bed corner
-            (0, 0),
-            (half_pad, -half_pad),
-            (PAD_FLAT_END, -half_pad),
-            (PAD_RAMP_END, -half_bar),
-            (floor_x - 16, -half_bar),
-            # outer side of the tine
-            (floor_x + 4, tine_lo),
-            (tip - 4, tine_lo),
-            (tip, TINE_Y),
-            # barb on the tine tip, its underside faces the notch
-            (tip - 3, tine_hi + BARB),
-            (tip - 8, tine_hi),
-            # notch
-            (floor_x, tine_hi),
-            (floor_x, notch_hi),
-            # lip
-            (floor_x + LIP_LENGTH, notch_hi),
-            (floor_x + LIP_LENGTH, lip_hi),
-            (floor_x - 14, half_bar),
-            (PAD_RAMP_END, half_bar),
-            (PAD_FLAT_END, half_pad),
-            (half_pad, half_pad),
+            (-1, end - 1),
+            (inset, half),
+            (LENGTH - inset, half),
+            (LENGTH + 1, end - 1),
+            (LENGTH + 1, -end + 1),
+            (LENGTH - inset, -half),
+            (inset, -half),
+            (-1, -end + 1),
         ]
     )
-    return rounded(body, 1.0)
+
+
+def land():
+    """Raised block for the plug, against the +y lip."""
+    return box(LAND_START, WIDTH / 2 - LAND_WIDTH, LAND_START + LAND_LENGTH, WIDTH / 2).intersection(outline())
 
 
 def slots():
-    """Slot rectangles, long side across the bar so the blade faces take the strand's pull."""
+    """Slot rectangles in the land, long side across the winder."""
+    centre_y = WIDTH / 2 - LAND_WIDTH / 2
+    first_x = LAND_START + (LAND_LENGTH - BLADE_SPACING) / 2
     return [
-        box(x - SLOT_THICKNESS / 2, -SLOT_WIDTH / 2, x + SLOT_THICKNESS / 2, SLOT_WIDTH / 2)
-        for x in (FIRST_SLOT_X, FIRST_SLOT_X + BLADE_SPACING)
+        box(x - SLOT_THICKNESS / 2, centre_y - SLOT_WIDTH / 2, x + SLOT_THICKNESS / 2, centre_y + SLOT_WIDTH / 2)
+        for x in (first_x, first_x + BLADE_SPACING)
     ]
 
 
+def window():
+    """Hook window with the barbed tine left standing in it."""
+    far = LENGTH - WINDOW_FROM_END
+    near = far - WINDOW_LENGTH
+    half = WINDOW_WIDTH / 2
+    tip = far - TINE_GAP
+    tine = TINE_WIDTH / 2
+    return rounded(
+        Polygon(
+            [
+                (near, -half),
+                (far, -half),
+                (far, half),
+                (near, half),
+                (near, tine),
+                (tip - 6, tine),
+                (tip - 3, tine + BARB),
+                (tip, 0),
+                (tip - 3, -tine - BARB),
+                (tip - 6, -tine),
+                (near, -tine),
+            ]
+        ),
+        0.8,
+    )
+
+
 def extrude(poly, z0, z1):
-    mesh = trimesh.creation.extrude_polygon(poly, z1 - z0)
+    pieces = [trimesh.creation.extrude_polygon(p, z1 - z0) for p in getattr(poly, "geoms", [poly])]
+    mesh = trimesh.util.concatenate(pieces)
     mesh.apply_translation((0, 0, z0))
     return mesh
 
 
-def prism(poly, height):
-    """Extrude with a bottom foot chamfer and a stepped top chamfer at layer height."""
-    parts = [extrude(poly.buffer(-FOOT_CHAMFER), 0, LAYER)]
-    parts.append(extrude(poly, LAYER, height - CHAMFER))
-    steps = int(round(CHAMFER / LAYER))
-    for i in range(steps):
+def prism(poly, height, z0=0.0):
+    """Extrude with a stepped top chamfer at layer height, and a foot chamfer on the bed."""
+    parts = []
+    start = z0
+    if z0 == 0:
+        parts.append(extrude(poly.buffer(-FOOT_CHAMFER), 0, LAYER))
+        start = LAYER
+    parts.append(extrude(poly, start, height - CHAMFER))
+    for i in range(int(round(CHAMFER / LAYER))):
         z = height - CHAMFER + i * LAYER
         parts.append(extrude(poly.buffer(-(i + 1) * LAYER), z, z + LAYER))
     return trimesh.boolean.union(parts, engine="manifold")
 
 
-def side_wedge():
-    """Side profile of the plug pad: flat, then ramping down to bar height."""
-    profile = Polygon(
-        [
-            (-1, 0),
-            (PAD_RAMP_END + 1, 0),
-            (PAD_RAMP_END + 1, BAR_HEIGHT - 1),
-            (PAD_RAMP_END, BAR_HEIGHT - 1),
-            (PAD_FLAT_END, PAD_HEIGHT),
-            (-1, PAD_HEIGHT),
-        ]
-    )
-    mesh = trimesh.creation.extrude_polygon(profile, PAD_WIDTH + 4)
-    mesh.apply_transform(trimesh.transformations.rotation_matrix(math.pi / 2, (1, 0, 0)))
-    mesh.apply_translation((0, PAD_WIDTH / 2 + 2, 0))
-    return mesh
-
-
-def slot_cutter(poly):
-    """Through slot with a lead-in at the top and a relief at the bottom."""
-    parts = [
-        extrude(poly, -1, PAD_HEIGHT + 1),
-        extrude(poly.buffer(0.4, join_style=2), -1, 0.4),
-        extrude(poly.buffer(0.6, join_style=2), PAD_HEIGHT - 0.6, PAD_HEIGHT + 1),
-    ]
+def cutter(poly, top):
+    """Through cut with a relief at the bottom, so elephant's foot can't close it."""
+    parts = [extrude(poly, -1, top + 1), extrude(poly.buffer(0.4, join_style=2), -1, 0.4)]
     return trimesh.boolean.union(parts, engine="manifold")
 
 
 def build():
     shape = outline()
-    bar = prism(shape, BAR_HEIGHT)
-    pad_region = shape.intersection(box(-1, -20, PAD_RAMP_END, 20))
-    pad = trimesh.boolean.intersection([prism(pad_region, PAD_HEIGHT), side_wedge()], engine="manifold")
-    part = trimesh.boolean.union([bar, pad], engine="manifold")
-    return trimesh.boolean.difference([part] + [slot_cutter(s) for s in slots()], engine="manifold")
+    between = channel()
+    ends = box(-1, -30, SOLID_END_PLUG, 30).union(box(LENGTH - SOLID_END_HOOK, -30, LENGTH + 1, 30))
+    parts = [
+        prism(shape.difference(between), HEIGHT),  # lips
+        extrude(shape, BACK_DEPTH, FLOOR_TOP),  # web
+        prism(shape.intersection(ends), FLOOR_TOP),  # solid ends
+        prism(land(), LAND_HEIGHT),
+    ]
+    part = trimesh.boolean.union(parts, engine="manifold")
+    cuts = [cutter(s, LAND_HEIGHT) for s in slots()] + [cutter(window(), HEIGHT)]
+    return trimesh.boolean.difference([part] + cuts, engine="manifold")
 
 
 def place_on_bed(part):
-    """Turn the bar onto the diagonal and centre it on the bed."""
+    """Turn the winder onto the diagonal and centre it on the bed."""
     placed = part.copy()
     placed.apply_transform(trimesh.transformations.rotation_matrix(math.pi / 4, (0, 0, 1)))
     lo, hi = placed.bounds
@@ -169,7 +202,7 @@ def check(part, placed):
     lo, hi = placed.bounds
     size = hi - lo
     print(f"watertight       {placed.is_watertight}")
-    print(f"overall length   {part.extents[0]:.1f} mm")
+    print(f"size             {part.extents[0]:.1f} x {part.extents[1]:.1f} mm")
     print(f"footprint on bed {size[0]:.1f} x {size[1]:.1f} mm, height {size[2]:.1f} mm")
     print(f"clear of bed     {min(lo[0], lo[1], BED - hi[0], BED - hi[1]):.1f} mm")
     print(f"volume           {placed.volume / 1000:.1f} cm3 solid")

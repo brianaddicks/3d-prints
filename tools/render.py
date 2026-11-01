@@ -150,11 +150,12 @@ def main():
 
     fig = plt.figure(figsize=(15, 10), dpi=130)
     grid = fig.add_gridspec(2, 3, left=0.02, right=0.98, top=0.95, bottom=0.03, wspace=0.05, hspace=0.2)
-    panel(fig, grid[0, :2], flat, 35, -80, f"Overall, {length:.0f} mm long")
+    width = flat.extents[1]
+    panel(fig, grid[0, :2], flat, 35, -80, f"Overall, {length:.0f} x {width:.0f} mm")
     bed_plan(fig.add_subplot(grid[0, 2]), mesh, args.bed)
-    panel(fig, grid[1, 0], flat, 40, -130, "Plug end", (26, 0, 6), 75)
-    panel(fig, grid[1, 1], flat, 40, -50, "Hook end", (length - 24, 2, 4), 62)
-    panel(fig, grid[1, 2], flat, 90, -90, "Hook from above", (length - 24, 2, 4), 62)
+    panel(fig, grid[1, 0], flat, 40, -130, "Plug end", (30, 0, 6), 90)
+    panel(fig, grid[1, 1], flat, 40, -50, "Hook end", (length - 32, 0, 4), 90)
+    panel(fig, grid[1, 2], flat, -35, -80, "Underside", None, None)
     fig.savefig(args.png)
 
 
