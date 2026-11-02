@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Render an STL laid out on the bed diagonal to a PNG: 3D views and a bed plan.
+"""Render a print to a PNG: the assembled part, a plan of each part on the bed, and close-ups.
 
 Uses a small software z-buffer, so it needs no GPU or display.
 
-usage: render.py part.stl out.png [--bed 220]
+usage: render.py assembled.stl out.png --parts a.stl b.stl --views "title,elev,azim,x,y,z,span;..."
 """
 import argparse
+from pathlib import Path
 
 import matplotlib
 
@@ -136,26 +137,32 @@ def bed_plan(ax, mesh, bed):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("stl")
+    parser.add_argument("assembled", help="the whole print laid out flat along x")
     parser.add_argument("png")
+    parser.add_argument("--parts", nargs="+", default=[], help="STLs placed on the bed, one plan each")
     parser.add_argument("--bed", type=float, default=220.0)
+    parser.add_argument("--views", default="", help="extra close-ups: title,elev,azim,x,y,z,span;...")
     args = parser.parse_args()
 
-    mesh = trimesh.load(args.stl, force="mesh")
-    # Turn back off the bed diagonal for the 3D views, so the long axis runs along x.
-    flat = mesh.copy()
-    flat.apply_transform(trimesh.transformations.rotation_matrix(-np.pi / 4, (0, 0, 1)))
+    flat = trimesh.load(args.assembled, force="mesh")
     flat.apply_translation((-flat.bounds[0][0], -flat.bounds.mean(axis=0)[1], -flat.bounds[0][2]))
-    length = flat.extents[0]
+    length, width = flat.extents[0], flat.extents[1]
+    views = [v.split(",") for v in args.views.split(";") if v]
 
-    fig = plt.figure(figsize=(15, 10), dpi=130)
-    grid = fig.add_gridspec(2, 3, left=0.02, right=0.98, top=0.95, bottom=0.03, wspace=0.05, hspace=0.2)
-    width = flat.extents[1]
-    panel(fig, grid[0, :2], flat, 35, -80, f"Overall, {length:.0f} x {width:.0f} mm")
-    bed_plan(fig.add_subplot(grid[0, 2]), mesh, args.bed)
-    panel(fig, grid[1, 0], flat, 20, 30, "Plug block, looking toward the plug end", (28, 8, 20), 70)
-    panel(fig, grid[1, 1], flat, 28, 25, "Hook end, looking in from the end", (length - 24, 0, 10), 60)
-    panel(fig, grid[1, 2], flat, -35, -80, "Underside", None, None)
+    rows = 1 + (len(args.parts) + len(views) + 2) // 3
+    fig = plt.figure(figsize=(15, 5 * rows), dpi=130)
+    grid = fig.add_gridspec(rows, 3, left=0.02, right=0.98, top=0.97, bottom=0.03, wspace=0.05, hspace=0.2)
+    panel(fig, grid[0, :2], flat, 35, -80, f"Assembled, {length:.0f} x {width:.0f} mm")
+    panel(fig, grid[0, 2], flat, -35, -80, "Underside")
+    cells = [grid[r, c] for r in range(1, rows) for c in range(3)]
+    for cell, stl in zip(cells, args.parts):
+        mesh = trimesh.load(stl, force="mesh")
+        ax = fig.add_subplot(cell)
+        bed_plan(ax, mesh, args.bed)
+        ax.set_title(Path(stl).stem + "\n" + ax.get_title().replace("On the ", ""), fontsize=10)
+    for cell, (title, elev, azim, x, y, z, span) in zip(cells[len(args.parts):], views):
+        x = float(x) if float(x) >= 0 else length + float(x)
+        panel(fig, cell, flat, float(elev), float(azim), title, (x, float(y), float(z)), float(span))
     fig.savefig(args.png)
 
 

@@ -5,27 +5,29 @@ lengthwise around the ends, and lips on both faces keep it from sliding off the 
 
 ![Render](render.png)
 
-- 264 x 50.8 mm (2 inches wide), the longest that width fits on the K1 bed diagonal.
-  The STL is already turned onto the diagonal.
-- To start, tuck the ring's wire under the hook on the channel floor and lay the ring flat. The
-  hook reaches toward the end, so pulling the strand toward the plug seats the ring. It's sized
-  for a ring of about 42-45 mm in 2 mm wire, measured from a photo of the first print.
-- To finish, push the plug's blades into the block at the plug end, label up. The body rests above
-  the lips and overhangs the edge slightly, so the cable can run under and beside it. Bring the
-  last wrap around the end and back to the plug, so tension pushes the blades in, not out.
-- Lips run the full length of both edges, on both faces.
+- Two parts, 434 mm long when assembled, with a 76 mm channel and 20 mm lips on each face.
+  Each part is as long as the K1 bed diagonal allows, and the STLs are already turned onto it.
+- To assemble, hold the hook end above the plug end and slide it straight down: the web
+  dovetails drop into their sockets and the lip halves overlap until the bumps click into
+  their dimples. It doesn't come apart afterwards.
+- To start winding, tuck the ring's wire under the hook on the top channel floor and lay the
+  ring flat. The hook reaches toward the end, so pulling the strand toward the plug seats it.
+  It's sized for a ring of about 42-45 mm in 2 mm wire, measured from a photo.
+- To finish, push the plug's blades into the block on the outside of the plug end, label up,
+  so the body sits beside the holder and the channel stays clear. Bring the last wrap around
+  the end and back to the plug, so tension pushes the blades in, not out.
 
 ## Printing
 
-Import the STL into OrcaSlicer and leave it where it lands, without rotating or auto-arranging it.
+Import each STL into OrcaSlicer and leave it where it lands, without rotating or auto-arranging it.
 
 | Setting | Value |
 | --- | --- |
 | Printer | Creality K1 (0.4 nozzle) |
 | Process | 0.20mm Standard |
-| Filament | PLA, about 50 g |
-| Time | About 1 hour 20 minutes |
-| Brim | **None.** Auto brim runs right up to the bed edge. |
-| Supports | None. The underside channel bridges 43 mm between the lips. |
+| Filament | PLA, about 305 g for both parts, much of it support |
+| Supports | **On, build plate only.** The underside channel's floor spans it 20 mm up. |
+| Brim | None |
+| Time | About 3.5 hours per part |
 
 Change the dimensions at the top of `model.py`, then rerun it. `SLOT_THICKNESS` sets the plug's grip.
