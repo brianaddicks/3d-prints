@@ -64,16 +64,16 @@ HOOK_BACK = 6.0
 HOOK_TOP = FLOOR_TOP + HOOK_THROAT + 3.0
 
 # Plug: an inline adapter with NEMA 1-15 blades, measured from photos. Body about 70 long,
-# 30 wide and 28-33 thick, blades about 15 long. It sticks straight out from the +y side,
-# label up, with its blades in a block on the outside of the lip. The strand's pull is then
-# across the blades, not along them.
-BLADE_SPACING = 12.7  # centre to centre, fixed by the standard. Along the holder.
-SLOT_WIDTH = 8.5  # upright. Clears the 7.9 wide polarized blade either way round.
+# 30 wide and 28-33 thick, blades about 15 long. It lies along the outside of the +y lip with
+# its blades pointing at the plug end, flat and one above the other, in a block on the lip.
+BLADE_SPACING = 12.7  # centre to centre, fixed by the standard. Upright here.
+SLOT_WIDTH = 8.5  # across. Clears the 7.9 wide polarized blade either way round.
 SLOT_THICKNESS = 1.9  # blades are about 1.5 thick. Reduce for a tighter grip.
 SLOT_DEPTH = 16.5
-BLOCK_CENTRE = 70.0  # along the plug end part
-BLOCK_LENGTH = 26.0
-BLOCK_DEPTH = 15.0  # how far the block stands out from the lip. The slots run on into the lip.
+PLUG_CLEARANCE = 17.5  # lip to the middle of the plug body: half its 33 mm flange, plus 1
+BLOCK_START = 60.0
+BLOCK_LENGTH = 19.0
+BLOCK_DEPTH = PLUG_CLEARANCE + SLOT_WIDTH / 2 + 3.0  # how far the block stands out from the lip
 SLOT_Z = HEIGHT / 2
 
 CHAMFER = 0.8
@@ -170,19 +170,19 @@ def tails(joint, grow=0.0):
 
 def block():
     """Plug block on the outside of the +y lip."""
-    half = BLOCK_LENGTH / 2
-    return box(BLOCK_CENTRE - half, HALF - 0.5, BLOCK_CENTRE + half, HALF + BLOCK_DEPTH)
+    return box(BLOCK_START, HALF - 0.5, BLOCK_START + BLOCK_LENGTH, HALF + BLOCK_DEPTH)
 
 
 def slot_cuts():
-    """Blade slots running in from the block's outer face, with a lead-in."""
-    face = HALF + BLOCK_DEPTH
+    """Flat blade slots, one above the other, opening toward the hook end, with a lead-in."""
+    face = BLOCK_START + BLOCK_LENGTH
+    centre_y = HALF + PLUG_CLEARANCE
     cuts = []
-    for x in (BLOCK_CENTRE - BLADE_SPACING / 2, BLOCK_CENTRE + BLADE_SPACING / 2):
-        slot = trimesh.creation.box(extents=(SLOT_THICKNESS, SLOT_DEPTH + 1, SLOT_WIDTH))
-        slot.apply_translation((x, face - SLOT_DEPTH / 2 + 0.5, SLOT_Z))
-        lead = trimesh.creation.box(extents=(SLOT_THICKNESS + 1.2, 1.2, SLOT_WIDTH + 1.2))
-        lead.apply_translation((x, face, SLOT_Z))
+    for z in (SLOT_Z - BLADE_SPACING / 2, SLOT_Z + BLADE_SPACING / 2):
+        slot = trimesh.creation.box(extents=(SLOT_DEPTH + 1, SLOT_WIDTH, SLOT_THICKNESS))
+        slot.apply_translation((face - SLOT_DEPTH / 2 + 0.5, centre_y, z))
+        lead = trimesh.creation.box(extents=(1.2, SLOT_WIDTH + 1.2, SLOT_THICKNESS + 1.2))
+        lead.apply_translation((face, centre_y, z))
         cuts += [slot, lead]
     return cuts
 
