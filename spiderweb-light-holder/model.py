@@ -28,7 +28,7 @@ HERE = Path(__file__).parent
 
 # Printer: Creality K1
 BED = 220.0
-BED_MARGIN = 7.5  # clear of each bed edge. OrcaSlicer rejects parts much closer once supports are on.
+BED_MARGIN = 14.0  # clear of each bed edge. OrcaSlicer rejects parts much closer with tree supports on.
 
 # Cross-section
 CHANNEL = 75.8  # between the lips. 3 cm wider than the first holder, for the bulk of the strand.
@@ -181,7 +181,8 @@ def slot_cuts():
     for z in (SLOT_Z - BLADE_SPACING / 2, SLOT_Z + BLADE_SPACING / 2):
         slot = trimesh.creation.box(extents=(SLOT_DEPTH + 1, SLOT_WIDTH, SLOT_THICKNESS))
         slot.apply_translation((face - SLOT_DEPTH / 2 + 0.5, centre_y, z))
-        lead = trimesh.creation.box(extents=(1.2, SLOT_WIDTH + 1.2, SLOT_THICKNESS + 1.2))
+        # The lead-in widens sideways only, so it leaves no ledge for supports to hold up.
+        lead = trimesh.creation.box(extents=(1.2, SLOT_WIDTH + 1.2, SLOT_THICKNESS))
         lead.apply_translation((face, centre_y, z))
         cuts += [slot, lead]
     return cuts

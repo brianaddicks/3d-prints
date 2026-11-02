@@ -5,7 +5,7 @@ lengthwise around the ends, and lips on both faces keep it from sliding off the 
 
 ![Render](render.png)
 
-- Two parts, 434 mm long when assembled, with a 76 mm channel and 20 mm lips on each face.
+- Two parts, 397 mm long when assembled, with a 76 mm channel and 20 mm lips on each face.
   Each part is as long as the K1 bed diagonal allows, and the STLs are already turned onto it.
 - To assemble, hold the hook end above the plug end and slide it straight down: the web
   dovetails drop into their sockets and the lip halves overlap until the bumps click into
@@ -26,9 +26,9 @@ Import each STL into OrcaSlicer and leave it where it lands, without rotating or
 | --- | --- |
 | Printer | Creality K1 (0.4 nozzle) |
 | Process | 0.20mm Standard |
-| Filament | PLA, about 305 g for both parts, much of it support |
-| Supports | **On, build plate only.** The underside channel's floor spans it 20 mm up. |
+| Filament | PLA, about 295 g for both parts, much of it support |
+| Supports | **Tree (auto), build plate only.** The underside channel's floor spans it 20 mm up. Clear the small support tips at the mouth of the lower plug slot. |
 | Brim | None |
-| Time | About 3.5 hours per part |
+| Time | About 6.7 hours per part |
 
 Change the dimensions at the top of `model.py`, then rerun it. `SLOT_THICKNESS` sets the plug's grip.
