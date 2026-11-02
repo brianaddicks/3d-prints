@@ -13,9 +13,9 @@ lengthwise around the ends, and lips on both faces keep it from sliding off the 
 - To start winding, tuck the ring's wire under the hook on the top channel floor and lay the
   ring flat. The hook reaches toward the end, so pulling the strand toward the plug seats it.
   It's sized for a ring of about 42-45 mm in 2 mm wire, measured from a photo.
-- To finish, push the plug's blades into the block on the outside of the plug end, label up,
-  so the body sits beside the holder and the channel stays clear. Bring the last wrap around
-  the end and back to the plug, so tension pushes the blades in, not out.
+- To finish, push the plug's blades into the block on the outside of the plug end, label up.
+  The plug sticks straight out sideways, clear of the channel, and the strand's pull is across
+  the blades, so it can't tug them out.
 
 ## Printing
 
