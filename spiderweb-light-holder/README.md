@@ -10,9 +10,10 @@ lengthwise around the ends, and lips on both faces keep it from sliding off the 
 - To start, tuck the ring's wire under the hook on the channel floor and lay the ring flat. The
   hook reaches toward the end, so pulling the strand toward the plug seats the ring. It's sized
   for a ring of about 42-45 mm in 2 mm wire, measured from a photo of the first print.
+- To finish, push the plug's blades into the block at the plug end, label up. The body rests above
+  the lips and overhangs the edge slightly, so the cable can run under and beside it. Bring the
+  last wrap around the end and back to the plug, so tension pushes the blades in, not out.
 - Lips run the full length of both edges, on both faces.
-- To finish, push the plug's blades into the block beside the lip. The slots suit a US two-blade plug,
-  with room for the wider polarized blade either way round, and the block takes the full blade.
 
 ## Printing
 

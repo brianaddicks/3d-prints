@@ -33,14 +33,19 @@ WEB = 4.0
 TOP_DEPTH = 8.0  # channel on the top
 END_RIB = 5.0  # underside rib across each end, measured in from the saddle
 
-# Plug: NEMA 1-15 (US two-blade)
+# Plug: an inline adapter with NEMA 1-15 blades, measured from photos. Body about 70 long,
+# 30 wide and 28-33 thick, blades about 15 long. It lies lengthwise with its blades pointing
+# at the plug end, plugged into a block. The body sits above the lips, so the lips stay
+# whole and the cable can still run under it.
 BLADE_SPACING = 12.7  # centre to centre, fixed by the standard
-SLOT_WIDTH = 8.5  # both slots clear the 7.9 wide polarized blade, so it fits either way round
+SLOT_WIDTH = 8.5  # upright in the block. Clears the 7.9 wide polarized blade either way round.
 SLOT_THICKNESS = 1.9  # blades are about 1.5 thick. Reduce for a tighter grip.
-LAND_HEIGHT = 16.0  # beside one lip, tall enough to take a whole blade
-LAND_WIDTH = 16.0
-LAND_START = 16.0
-LAND_LENGTH = 24.0
+SLOT_DEPTH = 16.5
+SLOT_Z = 33.0  # blade centre height. Half the 33 thick flange clears the 16 high lips.
+SLOT_WALL = 3.0
+BLOCK_START = 7.0
+BLOCK_LENGTH = 19.0
+BLOCK_HEIGHT = SLOT_Z + SLOT_WIDTH / 2 + SLOT_WALL
 
 # Hook: rises from the channel floor and reaches toward the end. The ring (42-45 mm
 # across, 2 mm wire, measured from a photo) lies flat around it, with its wire in the
@@ -57,6 +62,7 @@ LAYER = 0.2
 
 FLOOR_TOP = BACK_DEPTH + WEB
 HEIGHT = FLOOR_TOP + TOP_DEPTH
+LIP_ALLOWANCE = 2.5  # extra block width outside the outer slot, over the lip
 
 
 def rounded(poly, radius):
@@ -105,19 +111,27 @@ def channel(lip):
     )
 
 
-def land():
-    """Raised block for the plug, against the +y lip."""
-    return box(LAND_START, WIDTH / 2 - LAND_WIDTH, LAND_START + LAND_LENGTH, WIDTH / 2).intersection(outline())
+def block_width():
+    return BLADE_SPACING + SLOT_THICKNESS + 2 * SLOT_WALL + LIP_ALLOWANCE
 
 
-def slots():
-    """Slot rectangles in the land, long side across the winder."""
-    centre_y = WIDTH / 2 - LAND_WIDTH / 2
-    first_x = LAND_START + (LAND_LENGTH - BLADE_SPACING) / 2
-    return [
-        box(x - SLOT_THICKNESS / 2, centre_y - SLOT_WIDTH / 2, x + SLOT_THICKNESS / 2, centre_y + SLOT_WIDTH / 2)
-        for x in (first_x, first_x + BLADE_SPACING)
-    ]
+def block():
+    """Plug block at the plug end, against the +y edge."""
+    return box(BLOCK_START, WIDTH / 2 - block_width(), BLOCK_START + BLOCK_LENGTH, WIDTH / 2)
+
+
+def slot_cuts():
+    """Horizontal blade slots, opening toward the middle of the winder, with a lead-in."""
+    centre_y = WIDTH / 2 - block_width() + SLOT_WALL + SLOT_THICKNESS / 2 + BLADE_SPACING / 2
+    face = BLOCK_START + BLOCK_LENGTH
+    cuts = []
+    for y in (centre_y - BLADE_SPACING / 2, centre_y + BLADE_SPACING / 2):
+        slot = trimesh.creation.box(extents=(SLOT_DEPTH + 1, SLOT_THICKNESS, SLOT_WIDTH))
+        slot.apply_translation((face - SLOT_DEPTH / 2 + 0.5, y, SLOT_Z))
+        lead = trimesh.creation.box(extents=(1.2, SLOT_THICKNESS + 1.2, SLOT_WIDTH + 1.2))
+        lead.apply_translation((face, y, SLOT_Z))
+        cuts += [slot, lead]
+    return cuts
 
 
 def hook():
@@ -161,12 +175,6 @@ def prism(poly, height, z0=0.0):
     return trimesh.boolean.union(parts, engine="manifold")
 
 
-def cutter(poly, top):
-    """Through cut with a relief at the bottom, so elephant's foot can't close it."""
-    parts = [extrude(poly, -1, top + 1), extrude(poly.buffer(0.4, join_style=2), -1, 0.4)]
-    return trimesh.boolean.union(parts, engine="manifold")
-
-
 def build():
     shape = outline()
     # Lips, plus a rib across each end that anchors the bridged floor on all four sides.
@@ -177,12 +185,11 @@ def build():
         extrude(footing, LAYER, BACK_DEPTH + 0.5),
         extrude(shape, BACK_DEPTH, FLOOR_TOP),  # web
         prism(shape.difference(channel(TOP_LIP)), HEIGHT, FLOOR_TOP - 0.5),  # top lips
-        prism(land(), LAND_HEIGHT),
+        prism(block().intersection(shape), BLOCK_HEIGHT, FLOOR_TOP - 0.5),
         hook(),
     ]
     part = trimesh.boolean.union(parts, engine="manifold")
-    cuts = [cutter(s, LAND_HEIGHT) for s in slots()]
-    return trimesh.boolean.difference([part] + cuts, engine="manifold")
+    return trimesh.boolean.difference([part] + slot_cuts(), engine="manifold")
 
 
 def place_on_bed(part):

@@ -153,7 +153,7 @@ def main():
     width = flat.extents[1]
     panel(fig, grid[0, :2], flat, 35, -80, f"Overall, {length:.0f} x {width:.0f} mm")
     bed_plan(fig.add_subplot(grid[0, 2]), mesh, args.bed)
-    panel(fig, grid[1, 0], flat, 40, -130, "Plug end", (30, 0, 6), 90)
+    panel(fig, grid[1, 0], flat, 20, 30, "Plug block, looking toward the plug end", (28, 8, 20), 70)
     panel(fig, grid[1, 1], flat, 28, 25, "Hook end, looking in from the end", (length - 24, 0, 10), 60)
     panel(fig, grid[1, 2], flat, -35, -80, "Underside", None, None)
     fig.savefig(args.png)
