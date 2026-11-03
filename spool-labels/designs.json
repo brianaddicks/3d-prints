@@ -1,0 +1,173 @@
+[
+ {
+  "id": "7d0c3f52-24aa-4c1e-9b1a-2f8e6a1c0024",
+  "name": "P-touch 24mm spool",
+  "kind": "spool",
+  "label": {
+   "w": 50.8,
+   "h": 18.0622
+  },
+  "layout": {
+   "mode": "image",
+   "exportFormat": "png",
+   "dpi": 180,
+   "paper": "A4",
+   "custom": {
+    "w": 50,
+    "h": 25
+   },
+   "landscape": false,
+   "margin": {
+    "t": 10,
+    "b": 10,
+    "l": 10,
+    "r": 10
+   },
+   "safe": {
+    "t": 0,
+    "b": 0,
+    "l": 0,
+    "r": 0
+   },
+   "columns": 3,
+   "spacing": {
+    "h": 2,
+    "v": 2
+   },
+   "skip": 0,
+   "copies": 1,
+   "border": "none"
+  },
+  "elements": [
+   {
+    "id": "7d0c3f52-24aa-4c1e-9b1a-2f8e6a1c0024-qr",
+    "type": "qr",
+    "x": 1.9756,
+    "y": 1.9756,
+    "size": 13.97,
+    "ec": "Q",
+    "encoding": "custom",
+    "urlTemplate": "https://www.home-assistant.io/tag/spool{id}",
+    "logo": true
+   },
+   {
+    "id": "7d0c3f52-24aa-4c1e-9b1a-2f8e6a1c0024-vendor",
+    "type": "text",
+    "x": 17.4978,
+    "y": 1.5,
+    "w": 32.3022,
+    "fontSize": 2.5,
+    "bold": false,
+    "align": "left",
+    "color": "#000000",
+    "wrap": false,
+    "template": "{{vendor.name}}"
+   },
+   {
+    "id": "7d0c3f52-24aa-4c1e-9b1a-2f8e6a1c0024-name",
+    "type": "text",
+    "x": 17.4978,
+    "y": 4.4,
+    "w": 32.3022,
+    "fontSize": 3.4,
+    "bold": true,
+    "align": "left",
+    "color": "#000000",
+    "wrap": true,
+    "template": "{filament.name}"
+   },
+   {
+    "id": "7d0c3f52-24aa-4c1e-9b1a-2f8e6a1c0024-meta",
+    "type": "text",
+    "x": 17.4978,
+    "y": 13.3,
+    "w": 32.3022,
+    "fontSize": 2.6,
+    "bold": false,
+    "align": "left",
+    "color": "#000000",
+    "wrap": false,
+    "template": "{{filament.material} · }{{filament.nozzleTemp}°C · }#{spool.id}"
+   }
+  ]
+ },
+ {
+  "id": "7d0c3f52-24aa-4c1e-9b1a-2f8e6a1c0012",
+  "name": "P-touch 12mm spool",
+  "kind": "spool",
+  "label": {
+   "w": 40.64,
+   "h": 10.7244
+  },
+  "layout": {
+   "mode": "image",
+   "exportFormat": "png",
+   "dpi": 180,
+   "paper": "A4",
+   "custom": {
+    "w": 50,
+    "h": 25
+   },
+   "landscape": false,
+   "margin": {
+    "t": 10,
+    "b": 10,
+    "l": 10,
+    "r": 10
+   },
+   "safe": {
+    "t": 0,
+    "b": 0,
+    "l": 0,
+    "r": 0
+   },
+   "columns": 3,
+   "spacing": {
+    "h": 2,
+    "v": 2
+   },
+   "skip": 0,
+   "copies": 1,
+   "border": "none"
+  },
+  "elements": [
+   {
+    "id": "7d0c3f52-24aa-4c1e-9b1a-2f8e6a1c0012-qr",
+    "type": "qr",
+    "x": 1.27,
+    "y": 1.27,
+    "size": 8.1844,
+    "ec": "M",
+    "encoding": "custom",
+    "urlTemplate": "https://www.home-assistant.io/tag/spool{id}",
+    "logo": false
+   },
+   {
+    "id": "7d0c3f52-24aa-4c1e-9b1a-2f8e6a1c0012-name",
+    "type": "text",
+    "x": 10.16,
+    "y": 0.5,
+    "w": 29.68,
+    "fontSize": 2.9,
+    "bold": true,
+    "align": "left",
+    "color": "#000000",
+    "wrap": true,
+    "template": "{filament.name}"
+   },
+   {
+    "id": "7d0c3f52-24aa-4c1e-9b1a-2f8e6a1c0012-meta",
+    "type": "text",
+    "x": 10.16,
+    "y": 7.6,
+    "w": 29.68,
+    "fontSize": 2.4,
+    "bold": false,
+    "align": "left",
+    "color": "#000000",
+    "wrap": false,
+    "template": "{{filament.material} · }#{spool.id}"
+   }
+  ]
+ }
+]
