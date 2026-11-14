@@ -15,8 +15,8 @@ The notch centre is x = y = 0.
 
 Mounting: four countersunk screws through the face into the notch floor, hidden under
 the ecobee. The ecobee's own back plate screws straight into the 5 mm face: mark its
-holes, drill 2.5 mm pilots. The hood slides into a rabbet on the top and left edges
-and is held with #4 x 1/2" flat-head screws driven from the back before the plate goes on
+holes, drill 2.5 mm pilots. The hood sits flat on the face along the top and left edges
+and is located and held with #4 x 1/2" flat-head screws driven from the back before the plate goes on
 the wall.
 """
 from pathlib import Path
@@ -49,7 +49,7 @@ WALL_HOLE, WALL_HEAD, BOSS = 4.6, 9.0, 10.0
 HOOD_T = 5.0
 HOOD_TOP_DEPTH = 45.0  # out from the face; the ecobee stands about 26 mm proud
 HOOD_LEFT_BOTTOM_DEPTH = 22.0  # the left side tapers down to this at the bottom
-RABBET = 1.5  # how deep the hood sits into the face
+RABBET = 0.0  # no recess: the plate prints face down, and a rabbet at the edge would float over the bed
 HOOD_FIT = 0.2
 HOOD_SCREW_PILOT, HOOD_SCREW_HOLE, HOOD_SCREW_HEAD = 2.0, 3.2, 6.5
 HOOD_SCREWS_TOP = (-55.0, 0.0, 55.0)

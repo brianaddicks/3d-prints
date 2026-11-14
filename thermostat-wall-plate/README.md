@@ -11,13 +11,15 @@ to 22 mm at the bottom.
 ## Parts
 
 - `plate.stl` prints face down on the bed. It has the plug, four countersunk wall-screw holes
-  hidden under the ecobee, a 36 x 20 mm wire slot, and a 1.5 mm rabbet for the hood.
-- `hood.stl` prints standing on the edge that sits in the rabbet.
+  hidden under the ecobee, and a 36 x 20 mm wire slot. There's no recess for the hood:
+  one at the edge would float over the bed when the face prints down.
+- `hood.stl` prints standing on the edge that sits on the plate.
 
 ## Install
 
-1. Attach the hood first. Set it in the rabbet and drive five #4 x 1/2" flat-head screws
-   from the back of the flange into its 2 mm pilots. A dab of CA glue in the rabbet also works.
+1. Attach the hood first. Set it flush with the plate's top and left edges and drive five
+   #4 x 1/2" flat-head screws from the back of the flange into its 2 mm pilots. A thin
+   line of CA glue along the joint also works.
 2. Feed the cable through the plug and the wire slot. Plug the hole in the wall around the
    cable with putty or foam so draughts from the wall cavity don't reach the sensor.
 3. Press the plug into the notch and screw the plate to the notch floor with four #6 or #8
@@ -31,7 +33,8 @@ to 22 mm at the bottom.
 | Setting | Value |
 | --- | --- |
 | Printer | Creality K1 (0.4 nozzle) |
-| Process | 0.20mm Standard, 4 walls |
+| Process | 0.20mm Standard, 4 walls, 15% infill |
+| Plate | About 80 g of PETG and 2.5 hours, 250 °C nozzle and 70 °C bed |
 | Filament | **PETG or ASA, not PLA.** The plate sits in direct sun on a black wall, and PLA softens at about 55 °C. |
 | Supports | None |
 | Brim | None |
