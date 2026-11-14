@@ -1,8 +1,7 @@
 # Thermostat wall plate with sun hood
 
 A plate for the downstairs ecobee Smart Thermostat Premium. A hollow plug fills the notch
-the previous owners cut in the paneling (about 130 x 73 mm, 18 mm deep, measured from
-photos). A 160 x 120 mm face laps onto the paneling and frames the 104 mm ecobee. An
+the previous owners cut in the paneling (121 x 80 mm, 18 mm deep). A 160 x 120 mm face laps onto the paneling and frames the 104 mm ecobee. An
 L-shaped hood along the top and left edges keeps direct sun off the thermostat. It sticks
 out 45 mm at the top, about 19 mm past the front of the ecobee, and the left side tapers
 to 22 mm at the bottom.

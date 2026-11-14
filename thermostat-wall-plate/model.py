@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """Downstairs thermostat wall plate for an ecobee Smart Thermostat Premium, with a sun hood.
 
-The old owners cut a notch in the wall paneling, about 130 wide, 73 tall and 18 deep
-(measured from photos). The plate fills the notch with a hollow plug and laps onto the
+The old owners cut a notch in the wall paneling, 121 wide, 80 tall and 18 deep. The plate fills the notch with a hollow plug and laps onto the
 paneling with a flange big enough to frame the ecobee (104 mm square). The sun comes
 from the top and left, so an L-shaped hood stands off the top and left edges.
 
@@ -30,7 +29,7 @@ from shapely.ops import unary_union
 HERE = Path(__file__).parent
 
 # Notch, from the photos
-NOTCH_W, NOTCH_H, NOTCH_D = 130.0, 73.0, 18.0
+NOTCH_W, NOTCH_H, NOTCH_D = 121.0, 80.0, 18.0  # remeasured 2026-11-14
 FIT = 0.5  # clearance on each side of the plug
 PLUG_W, PLUG_H = NOTCH_W - 2 * FIT, NOTCH_H - 2 * FIT
 PLUG_DEPTH = NOTCH_D - 1.0  # stops short of the floor so the face always seats on the paneling
