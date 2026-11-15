@@ -52,6 +52,16 @@ def main():
     up = tab_peg_up()
     m.check("peg-up", up)
     up.export(m.HERE / "fit-test-peg-up.stl")
+    # Four copies spread out, so each tiny peg layer gets time to cool while the nozzle
+    # visits the others. A lone peg layer takes under a second and prints lumpy.
+    copies = []
+    for i, (dx, dy) in enumerate([(-30, -30), (30, -30), (-30, 30), (30, 30)]):
+        c = up.copy()
+        c.apply_translation((dx, dy, 0))
+        copies.append(c)
+    four = trimesh.util.concatenate(copies)
+    m.check("peg-up x4", four)
+    four.export(m.HERE / "fit-test-peg-up-x4.stl")
     pieces = [strip()]
     pieces[0].apply_translation((-pieces[0].bounds[0][0] + 0, -pieces[0].bounds[0][1], 0))
     for i in range(3):

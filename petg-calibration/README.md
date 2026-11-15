@@ -32,4 +32,9 @@ To make it:
 
 | Spool | Date | Best temperature | Notes |
 | --- | --- | --- | --- |
-| Inland Black PETG (Spoolman #10) | 2026-11-15 | | |
+| Inland Black PETG (Spoolman #10) | 2026-11-15 | 240 °C | All six blocks looked about the same: almost no stringing, clean 8 mm bridges, even overhangs. The 250 label was slightly softer. Picked the middle of the clean range. |
+
+For tiny parts such as the thermostat hood's 2.6 mm pegs, temperature isn't the problem:
+each layer prints in under a second and has no time to cool. Print several copies at once,
+and use the K1's side fan (`additional_cooling_fan_speed` 40) with `slow_down_min_speed`
+10 mm/s.
