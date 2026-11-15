@@ -19,6 +19,7 @@ holes, drill 2.5 mm pilots. The hood sits flat on the face along the top and lef
 Five pegs on its wall-side edge press into through-holes in the face (PEG_FIT sets how
 tight), so it needs no screws.
 """
+import sys
 from pathlib import Path
 
 import manifold3d  # noqa: F401  trimesh's boolean engine
@@ -27,6 +28,8 @@ from shapely.geometry import LineString, Point, Polygon, box
 from shapely.ops import unary_union
 
 HERE = Path(__file__).parent
+sys.path.insert(0, str(HERE.parent / "lib"))
+import pegs  # noqa: E402  shared press-fit pegs, see lib/pegs.py
 
 # Notch, from the photos
 NOTCH_W, NOTCH_H, NOTCH_D = 121.0, 80.0, 18.0  # remeasured 2026-11-14
@@ -115,14 +118,7 @@ def peg_points():
 def peg_profile(x, y, grow=0.0):
     """Teardrop pointing +y, which is down when the hood prints on its top face, so the
     horizontal pegs need no support. The tip is cut off to keep it clear of the plate edge."""
-    r = PEG_D / 2
-    circle = Point(x, y).buffer(r, resolution=24)
-    k = r / 2 ** 0.5
-    point = Polygon([(x - k, y + k), (x + k, y + k), (x, y + r * 2 ** 0.5)])
-    drop = unary_union([circle, point]).intersection(box(x - r, y - r, x + r, y + 1.2 * r))
-    if grow:
-        drop = drop.buffer(grow, resolution=24)
-    return drop.simplify(0.005)  # drops near-duplicate vertices that break the extrusion
+    return pegs.profile(x, y, PEG_D, grow, point=(0.0, 1.0))
 
 
 def plate():

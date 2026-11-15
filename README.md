@@ -34,6 +34,21 @@ uploading:
 It renders the STLs (all of them on one picture if you pass several) and embeds 96x96 and
 300x300 PNGs in OrcaSlicer's format. G-code sliced in the OrcaSlicer app already has them.
 
+## Shared parts
+
+`lib/` holds pieces tested on the K1 that other models can import:
+
+- `lib/pegs.py`: 2.6 mm teardrop press-fit pegs and their holes. The default 0.10 mm
+  clearance per side presses in firmly in PETG; the docstring has the test results and
+  printing tips. The thermostat wall plate's hood uses them.
+
+```
+sys.path.insert(0, str(Path(__file__).parent.parent / "lib"))
+import pegs
+pegs.peg(x, y, z0, z1)     # the peg, axis along z
+pegs.hole(x, y, z0, z1)    # the matching hole cutter
+```
+
 ## Spool labels
 
 Filament is tracked in [Spoolman](https://github.com/Donkie/Spoolman), and each storage
