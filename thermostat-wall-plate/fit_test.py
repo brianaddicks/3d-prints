@@ -38,7 +38,20 @@ def tab():
     return m.lay_hood(m.union([wall, peg]))
 
 
+def tab_peg_up():
+    """One tab standing on its free edge with the peg pointing up, so the peg prints as a
+    vertical post with no overhang at all. Written to fit-test-peg-up.stl."""
+    wall = m.extrude(box(-TAB_W / 2, m.Y1 - m.HOOD_T, TAB_W / 2, m.Y1), m.FACE_T, m.FACE_T + TAB_DEPTH)
+    peg = m.extrude(m.peg_profile(0, m.Y1 - m.PEG_INSET), m.FACE_T - m.PEG_LEN, m.FACE_T + 0.5)
+    t = m.union([wall, peg])
+    t.apply_transform(trimesh.transformations.rotation_matrix(3.14159265, (1, 0, 0)))
+    return m.to_bed(t)
+
+
 def main():
+    up = tab_peg_up()
+    m.check("peg-up", up)
+    up.export(m.HERE / "fit-test-peg-up.stl")
     pieces = [strip()]
     pieces[0].apply_translation((-pieces[0].bounds[0][0] + 0, -pieces[0].bounds[0][1], 0))
     for i in range(3):
