@@ -23,6 +23,17 @@ cd spiderweb-light-holder
 `render.py` draws the assembled print, a bed plan for each part and any close-ups given with
 `--views` as `title,elevation,azimuth,x,y,z,span` (a negative x counts back from the far end).
 
+OrcaSlicer's command line runs without a display and leaves its preview thumbnails out of the
+G-code, so Fluidd and the Home Assistant "Part preview" card show nothing. Add them before
+uploading:
+
+```
+~/.venvs/3d-prints/bin/python tools/add_thumbnails.py plate_1.gcode part.gcode part.stl
+```
+
+It renders the STLs (all of them on one picture if you pass several) and embeds 96x96 and
+300x300 PNGs in OrcaSlicer's format. G-code sliced in the OrcaSlicer app already has them.
+
 ## Spool labels
 
 Filament is tracked in [Spoolman](https://github.com/Donkie/Spoolman), and each storage
